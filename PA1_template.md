@@ -263,21 +263,53 @@ weekenddata = datamod[ind,]
 weekendintervalmean = aggregate(weekenddata$steps, list(weekenddata$interval), 
                                 mean, na.rm=TRUE)
 
-#Plot weekday and weekend steps
-png("plot4.png", 640, 480)
-par(mfcol=c(2,1))
-
 #Plot mean number of steps across all days by interval
 plot(weekdayintervalmean$Group.1, weekdayintervalmean$x, type='l', 
      ylab="Mean Number of Steps", 
      xlab="Interval", main="Weekdays")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
+```r
+#Save out plot as png
+dev.copy(png, 'plot4.png')
+```
+
+```
+## png 
+##   3
+```
+
+```r
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
 #Plot mean number of steps across all days by interval
 plot(weekendintervalmean$Group.1, weekendintervalmean$x, type='l', 
      ylab="Mean Number of Steps", 
      xlab="Interval", main="Weekends")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-2.png) 
+
+```r
 #Save out plot as png
+dev.copy(png, 'plot5.png')
+```
+
+```
+## png 
+##   3
+```
+
+```r
 dev.off()
 ```
 
