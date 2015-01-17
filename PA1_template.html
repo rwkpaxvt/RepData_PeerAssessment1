@@ -107,6 +107,9 @@ stepmedian</code></pre>
 intmean = tapply(data$steps, list(data$interval), mean, na.rm=TRUE)
 intervalmean = aggregate(data$steps, list(data$interval), mean, na.rm=TRUE)
 daymean = aggregate(data$steps, list(data$date), mean, na.rm=TRUE)
+maxint = max(intervalmean$x)
+maxintind = intervalmean$x == maxint
+maxinterval = intervalmean$Group.1[maxintind]
 #Plot mean number of steps across all days by interval
 plot(unique(data$interval), intmean, type='l', ylab=&quot;Mean Number of Steps&quot;, 
      xlab=&quot;Interval&quot;, main=&quot;Mean Number of Steps Across Days by Interval&quot;)</code></pre>
