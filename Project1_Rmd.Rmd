@@ -1,0 +1,143 @@
+---
+title: "Project1"
+author: "rwkpaxvt"
+date: "Saturday, January 17, 2015"
+output: html_document
+---
+
+This is an R Markdown document for Project 1 in the Reproducible Research Coursera Class.
+
+##Read in the data, plot the total number of steps per day, then save out the plot
+```{r}
+data = read.csv("activity.csv")
+stepsum = tapply(data$steps, data$date, FUN=sum)
+stepsum
+barplot(stepsum, main="Total Steps per Day", xlab="Date", ylab="Number of Steps")
+dev.copy(png, 'plot1.png')
+dev.off()
+```
+
+##Calculate the mean and median steps per day the plot the mean number of steps by interval
+```{r}
+#Calculate mean and median by day
+stepmean = mean(stepsum, na.rm=TRUE)
+stepmean
+stepmedian = median(stepsum, na.rm=TRUE)
+stepmedian
+#Calculate mean number of steps across intervals and days (for later calculations)
+intmean = tapply(data$steps, list(data$interval), mean, na.rm=TRUE)
+intervalmean = aggregate(data$steps, list(data$interval), mean, na.rm=TRUE)
+daymean = aggregate(data$steps, list(data$date), mean, na.rm=TRUE)
+#Plot mean number of steps across all days by interval
+plot(unique(data$interval), intmean, type='l', ylab="Mean Number of Steps", 
+     xlab="Interval", main="Mean Number of Steps Across Days by Interval")
+#Save out plot as png
+dev.copy(png, 'plot2.png')
+dev.off()
+```
+
+##Fill in all missing values and recalculate the mean and median steps per day
+
+```{r}
+#Find max number of steps by interval
+maxinterval = max(intervalmean)
+maxinterval
+
+#Find total number of NA values
+numNA = sum(is.na(data$steps))
+
+#Replace missing values with the mean for the interval
+datamod = data
+for (i in 1:length(datamod$steps)) {
+  if(is.na(datamod$steps[i])){
+    
+    ind = intervalmean$Group.1 == datamod$interval[i]
+    
+    datamod$steps[i] = intervalmean$x[ind]
+    
+    #If no mean exists for that interval, replace with the mean for the day
+    if(is.na(intervalmean$x[i])) {
+      ind = daymean$Group.1 == datamod$date[i]
+      datamod$steps[i] = daymean$x[ind]
+      
+      #If no mean exists for that date, replace with a zero
+      datamod$steps[i] = 0
+    }
+    
+  }
+  
+}
+
+#Recreate histogram and recalculate mean and median
+#Calculate total number of steps per day
+stepsummod = tapply(datamod$steps, datamod$date, FUN=sum)
+stepsummod
+
+#Plot number of steps
+barplot(stepsummod, main="Total Steps per Day", xlab="Date", ylab="Number of Steps")
+
+#Save out plot as png
+dev.copy(png, 'plot3.png')
+dev.off()
+```
+
+##Calculate step trends by weekday and weekend
+```{r}
+#Calculate mean and median by day
+stepmeanmod = mean(stepsummod, na.rm=TRUE)
+stepmeanmod
+stepmedianmod = median(stepsummod, na.rm=TRUE)
+stepmedianmod
+
+#Append a weekday or weekend field to datamod
+datamod$date = as.Date(datamod$date)
+datamod$weekday = weekdays(datamod$date)
+
+a = grep("Saturday", datamod$weekday)
+datamod$weekday[a] = 0
+b = grep("Sunday", datamod$weekday)
+datamod$weekday[b] = 0
+ind = datamod$weekday == 0
+ind = ind == 0
+datamod$weekday[ind] = 1
+
+#Calculate average number of steps across intervals for weekends and weekdays
+ind = datamod$weekday == 1
+weekdaydata = datamod[ind,]
+weekdayintervalmean = aggregate(weekdaydata$steps, list(weekdaydata$interval), 
+  mean, na.rm=TRUE)
+ind = datamod$weekday == 0
+weekenddata = datamod[ind,]
+weekendintervalmean = aggregate(weekenddata$steps, list(weekenddata$interval), 
+                                mean, na.rm=TRUE)
+
+#Plot weekday and weekend steps
+png("plot4.png", 640, 480)
+par(mfcol=c(2,1))
+
+#Plot mean number of steps across all days by interval
+plot(weekdayintervalmean$Group.1, weekdayintervalmean$x, type='l', 
+     ylab="Mean Number of Steps", 
+     xlab="Interval", main="Weekdays")
+
+#Plot mean number of steps across all days by interval
+plot(weekendintervalmean$Group.1, weekendintervalmean$x, type='l', 
+     ylab="Mean Number of Steps", 
+     xlab="Interval", main="Weekends")
+
+#Save out plot as png
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
