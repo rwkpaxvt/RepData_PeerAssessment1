@@ -89,6 +89,14 @@ daymean = aggregate(data$steps, list(data$date), mean, na.rm=TRUE)
 maxint = max(intervalmean$x)
 maxintind = intervalmean$x == maxint
 maxinterval = intervalmean$Group.1[maxintind]
+maxinterval
+```
+
+```
+## [1] 835
+```
+
+```r
 #Plot mean number of steps across all days by interval
 plot(unique(data$interval), intmean, type='l', ylab="Mean Number of Steps", 
      xlab="Interval", main="Mean Number of Steps Across Days by Interval")
