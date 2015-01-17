@@ -124,7 +124,7 @@ dev.off()
 ```
 
 
-## Imputing missing values
+## Inputing missing values
 
 ```r
 #Find max number of steps by interval
